@@ -13,16 +13,16 @@ param clusterName string = ''
 param utcValue string = utcNow()
 
 @description('Public Helm Repo Name')
-param helmRepo string = 'azure-marketplace'
+param helmRepo string = 'mlrun-marketplace'
 
 @description('Public Helm Repo URL')
 param helmRepoURL string = 'https://marketplace.azurecr.io/helm/v1/repo'
 
 @description('Public Helm App')
-param helmApp string = 'azure-marketplace/wordpress'
+param helmApp string = 'mlrun-marketplace/mlrun-ce'
 
 @description('Public Helm App Name')
-param helmAppName string = 'my-wordpress'
+param helmAppName string = 'mlrun-ce'
 
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 

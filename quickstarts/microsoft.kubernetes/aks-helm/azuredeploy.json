@@ -11,7 +11,7 @@
   "parameters": {
     "clusterName": {
       "type": "string",
-      "defaultValue": "aks101cluster",
+      "defaultValue": "devmlurncesystem01",
       "metadata": {
         "description": "The name of the Managed Cluster resource."
       }
@@ -25,13 +25,14 @@
     },
     "dnsPrefix": {
       "type": "string",
+      "defaultValue": "devmlurncesystem01",
       "metadata": {
         "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
       }
     },
     "osDiskSizeGB": {
       "type": "int",
-      "defaultValue": 0,
+      "defaultValue": 40,
       "maxValue": 1023,
       "minValue": 0,
       "metadata": {
@@ -56,6 +57,7 @@
     },
     "linuxAdminUsername": {
       "type": "string",
+      "defaultValue": "azureuser",
       "metadata": {
         "description": "User name for the Linux Virtual Machines."
       }
@@ -82,28 +84,28 @@
     },
     "helmRepo": {
       "type": "string",
-      "defaultValue": "azure-marketplace",
+      "defaultValue": "mlrun-marketplace",
       "metadata": {
         "description": "Public Helm Repo Name"
       }
     },
     "helmRepoURL": {
       "type": "string",
-      "defaultValue": "https://marketplace.azurecr.io/helm/v1/repo",
+      "defaultValue": "https://mlrun.github.io/ce",
       "metadata": {
         "description": "Public Helm Repo URL"
       }
     },
     "helmApp": {
       "type": "string",
-      "defaultValue": "azure-marketplace/wordpress",
+      "defaultValue": "mlrun-marketplace/mlrun-ce",
       "metadata": {
         "description": "Public Helm App"
       }
     },
     "helmAppName": {
       "type": "string",
-      "defaultValue": "my-wordpress",
+      "defaultValue": "mlrun-ce",
       "metadata": {
         "description": "Public Helm App Name"
       }
@@ -219,28 +221,28 @@
             },
             "helmRepo": {
               "type": "string",
-              "defaultValue": "azure-marketplace",
+              "defaultValue": "mlrun-marketplace",
               "metadata": {
                 "description": "Public Helm Repo Name"
               }
             },
             "helmRepoURL": {
               "type": "string",
-              "defaultValue": "https://marketplace.azurecr.io/helm/v1/repo",
+              "defaultValue": "https://mlrun.github.io/ce",
               "metadata": {
                 "description": "Public Helm Repo URL"
               }
             },
             "helmApp": {
               "type": "string",
-              "defaultValue": "azure-marketplace/wordpress",
+              "defaultValue": "mlrun-marketplace/mlrun-ce",
               "metadata": {
                 "description": "Public Helm App"
               }
             },
             "helmAppName": {
               "type": "string",
-              "defaultValue": "my-wordpress",
+              "defaultValue": "mlrun-ce",
               "metadata": {
                 "description": "Public Helm App Name"
               }

@@ -1,5 +1,5 @@
 @description('The name of the Managed Cluster resource.')
-param clusterName string = 'aks101cluster'
+param clusterName string = 'devmlurncesystem01'
 
 @description('The location of the Managed Cluster resource.')
 param location string = resourceGroup().location
@@ -34,16 +34,16 @@ param _artifactsLocation string = deployment().properties.templateLink.uri
 param _artifactsLocationSasToken string = ''
 
 @description('Public Helm Repo Name')
-param helmRepo string = 'azure-marketplace'
+param helmRepo string = 'mlrun-marketplace'
 
 @description('Public Helm Repo URL')
 param helmRepoURL string = 'https://marketplace.azurecr.io/helm/v1/repo'
 
 @description('Public Helm App')
-param helmApp string = 'azure-marketplace/wordpress'
+param helmApp string = 'mlrun-marketplace/mlrun-ce'
 
 @description('Public Helm App Name')
-param helmAppName string = 'my-wordpress'
+param helmAppName string = 'mlrun-ce'
 
 resource aks 'Microsoft.ContainerService/managedClusters@2020-09-01' = {
   name: clusterName

@@ -12,10 +12,10 @@ az aks install-cli
 az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
 
 # Create Namespace
-NAMESPACE=mlrun
-kubectl create ns $NAMESPACE
+NAMESPACE="mlrun"
+kubectl create namespace $NAMESPACE
 
-# Install Simple Helm Chart https://github.com/bitnami/azure-marketplace-charts
+# Install Simple Helm Chart https://github.com/bitnami/mlrun-marketplace-charts
 
 helm repo add \
     $HELM_REPO \
