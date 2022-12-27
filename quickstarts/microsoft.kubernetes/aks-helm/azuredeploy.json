@@ -213,7 +213,7 @@
             "value": "[parameters('helmAppName')]"
           },
           "dnsPrefix": {
-            "value": "[properties('dnsPrefix')]"
+            "value": "[parameters('dnsPrefix')]"
           }
         },
         "template": {
@@ -355,10 +355,6 @@
                   {
                     "name": "CONTAINER_REGISTRY_NAME",
                     "secureValue": "https://[parameters('helmAppName')].azurecr.io"
-                  },
-                  {
-                    "name": "DNS_PREFIX",
-                    "secureValue": "[parameters('dnsPrefix')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
