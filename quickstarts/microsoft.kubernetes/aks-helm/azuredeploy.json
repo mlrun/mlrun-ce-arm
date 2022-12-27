@@ -211,6 +211,9 @@
           },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
+          },
+          "dnsPrefix": {
+            "value": "[parameters('dnsPrefix')]"
           }
         },
         "template": {
