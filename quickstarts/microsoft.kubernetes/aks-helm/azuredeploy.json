@@ -113,40 +113,6 @@
   },
   "resources": [
     {
-      "type": "Microsoft.ContainerRegistry/registries",
-      "apiVersion": "2021-09-01",
-      "name": "[parameters('clusterName')]",
-      "location": "[parameters('location')]",
-      "tags": {
-        "displayName": "Container Registry",
-        "container.registry": "[parameters('clusterName')]"
-      },
-      "sku": {
-        "name": "Basic"
-      },
-      "properties": {
-        "adminUserEnabled": "false"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2021-09-01",
-      "name": "[parameters('clusterName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "StorageV2"
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2021-09-01",
-      "name": "[format('{0}/default/{1}', parameters('clusterName'),parameters('helmAppName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterName'))]"
-      ]
-    },
-    {
       "type": "Microsoft.ContainerService/managedClusters",
       "apiVersion": "2020-09-01",
       "name": "[parameters('clusterName')]",
@@ -211,6 +177,7 @@
           },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -279,7 +246,7 @@
               "metadata": {
                 "description": "Public Helm App Name"
               }
-            },
+            }
           },
           "variables": {
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
@@ -347,10 +314,6 @@
                   {
                     "name": "HELM_APP_NAME",
                     "secureValue": "[parameters('helmAppName')]"
-                  },
-                  {
-                    "name": "CONTAINER_REGISTRY_NAME",
-                    "secureValue": "https://[parameters('helmAppName')].azurecr.io"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
