@@ -131,7 +131,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-09-01",
-      "name": "[variables('clusterName')]",
+      "name": "[parameters('clusterName')]",
       "location": "[parameters('location')]",
       "sku": {
         "name": "Standard_LRS"
@@ -141,9 +141,9 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2021-09-01",
-      "name": "[format('{0}/default/{1}', variables('clusterName'),blobcheck)]",
+      "name": "[format('{0}/default/{1}', parameters('clusterName'),blobcheck)]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('clusterName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterName'))]"
       ]
     },
     {
