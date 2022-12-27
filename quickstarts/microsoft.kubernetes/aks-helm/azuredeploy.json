@@ -141,7 +141,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2021-09-01",
-      "name": "[format('{0}/default/{1}', parameters('clusterName'),blobcheck)]",
+      "name": "[format('{0}/default/{1}', parameters('clusterName'),parameters('helmAppName'))]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterName'))]"
       ]
