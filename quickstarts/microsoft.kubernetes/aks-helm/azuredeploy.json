@@ -112,6 +112,40 @@
     }
   },
   "resources": [
+      {
+        "type": "Microsoft.ContainerRegistry/registries",
+        "apiVersion": "2021-09-01",
+        "name": "[parameters('clusterName')]",
+        "location": "[parameters('location')]",
+        "tags": {
+          "displayName": "Container Registry",
+          "container.registry": "[parameters('clusterName')]"
+        },
+        "sku": {
+          "name": "Basic"
+        },
+        "properties": {
+          "adminUserEnabled": "false"
+        }
+      },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-09-01",
+      "name": "[variables('clusterName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2021-09-01",
+      "name": "[format('{0}/default/{1}', variables('clusterName'),blobcheck)]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('clusterName'))]"
+      ]
+    },
     {
       "type": "Microsoft.ContainerService/managedClusters",
       "apiVersion": "2020-09-01",

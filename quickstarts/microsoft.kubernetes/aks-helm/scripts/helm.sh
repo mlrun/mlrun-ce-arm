@@ -236,6 +236,7 @@ helm install \
     $HELM_APP_NAME \
     $HELM_APP \
     -n $NAMESPACE \
-    --set global.imagePullSecrets={emptysecret}
+    --set global.imagePullSecrets={emptysecret} \
+    -f overide-env.yaml
 
 echo \{\"Status\":\"Complete\"\} > $AZ_SCRIPTS_OUTPUT_PATH
