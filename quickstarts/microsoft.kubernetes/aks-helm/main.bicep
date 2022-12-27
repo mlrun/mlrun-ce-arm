@@ -87,7 +87,6 @@ module helm 'modules/helm.bicep' = {
     helmRepoURL               : helmRepoURL
     helmApp                   : helmApp
     helmAppName               : helmAppName
-    dnsPrefix                 : dnsPrefix
   }
 }
 
