@@ -283,7 +283,15 @@
               "metadata": {
                 "description": "Public Helm App Name"
               }
-            }
+            },
+            "dnsPrefix": {
+              "type": "string",
+              "defaultValue": "devmlurncesystem01",
+              "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+              }
+            },
+
           },
           "variables": {
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
@@ -355,6 +363,10 @@
                   {
                     "name": "CONTAINER_REGISTRY_NAME",
                     "secureValue": "https://[parameters('helmAppName')].azurecr.io"
+                  },
+                  {
+                    "name": "DNS_PREFIX",
+                    "secureValue": "[parameters('dnsPrefix')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
