@@ -348,6 +348,14 @@
                   {
                     "name": "HELM_APP_NAME",
                     "secureValue": "[parameters('helmAppName')]"
+                  },
+                  {
+                    "name": "CONTAINER_REGISTRY_NAME",
+                    "secureValue": "[reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('clusterName'))).loginServer]"
+                  },
+                  {
+                    "name": "DNS_PREFIX",
+                    "secureValue": "[parameters('dnsPrefix')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",

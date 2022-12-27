@@ -11,6 +11,10 @@ az aks install-cli
 # Get cluster credentials
 az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
 
+# Attach an ACR to an AKS cluster
+az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
+
+
 # Create Namespace
 NAMESPACE="mlrun"
 kubectl create namespace $NAMESPACE
@@ -21,19 +25,12 @@ global:
   registry:
     url: "${CONTAINER_REGISTRY_NAME}"
 nuclio:
-  platform:
-    kube:
-      defaultFunctionServiceAccount: mlrun-jobs-sa
   registry:
     pushPullUrl: "${CONTAINER_REGISTRY_NAME}"
   dashboard:
     containerBuilderKind: kaniko
-    imageNamePrefixTemplate: "${CLUSTER_NAME}-{{ .ProjectName }}-{{ .FunctionName }}-"
+    imageNamePrefixTemplate: ${CLUSTER_NAME}-{{ .ProjectName }}-{{ .FunctionName }}-
 mlrun:
-  serviceAccounts:
-    api:
-      create: false
-      name: mlrun-api-aws
   nuclio:
     uiURL:  "https://nuclio.${CLUSTER_NAME}.${DNS_PREFIX}"
   storage: filesystem
@@ -43,71 +40,17 @@ mlrun:
       enabled: true
       annotations: ~
       storageClass: azurefile-csi
-    envFrom:
-      - configMapRef:
-          name: mlrun-override-env
-          optional: true
-    extraEnv:
-      - name: S3_NON_ANONYMOUS
-        value: "true"
-      - name: MLRUN_DEFAULT_TENSORBOARD_LOGS_PATH
-        value: /home/jovyan/data/tensorboard/{{ `{{project}} `}}
-      - name: MLRUN_CE__MODE
-        value: full
-      - name: MLRUN_SPARK_OPERATOR_VERSION
-        value: spark-3
-      - name: MLRUN_STORAGE__AUTO_MOUNT_TYPE
-        value: s3
-      - name: MLRUN_STORAGE__AUTO_MOUNT_PARAMS
-        value: "non_anonymous=True"
-      - name: MLRUN_FUNCTION__SPEC__SERVICE_ACCOUNT__DEFAULT
-        value: mlrun-jobs-sa
-      - name: MLRUN_HTTPDB__PROJECTS__FOLLOWERS
-        value: nuclio
-      - name: MLRUN_HTTPDB__REAL_PATH
-        value: s3://
-      - name: MLRUN_ARTIFACT_PATH
-        value: s3://${MlrunBucket}/
-      - name: MLRUN_SPARK_APP_IMAGE
-        value: gcr.io/iguazio/spark-app
-      - name: MLRUN_SPARK_APP_IMAGE_TAG
-        value: v3.2.1-mlk
-      - name: MLRUN_KFP_URL
-        value: http://ml-pipeline.mlrun.svc.cluster.local:8888
-      - name: MLRUN_REDIS_URL
-        value: ${REDISUrl}
   db:
     persistence:
       enabled: true
       annotations: ~
-      storageClass: aws-efs
-  httpDB:
-    dbType: mysql
-    dsn: mysql+pymysql://root@mlrun-db:3306/mlrun
-    oldDsn: sqlite:////mlrun/db/mlrun.db?check_same_thread=false
+      storageClass: azurefile-csi
 jupyterNotebook:
-  awsInstall: true
-  serviceAccount: mlrun-jobs-sa
   mlrunUIURL:  https://mlrun.${EKSClusterName}.${ClusterDomain}
   persistence:
     enabled: true
     annotations: ~
-    storageClass: aws-efs
-  extraEnv:
-      - name: S3_NON_ANONYMOUS
-        value: "true"
-      - name: MLRUN_HTTPDB__REAL_PATH
-        value: s3://
-      - name: MLRUN_STORAGE__AUTO_MOUNT_TYPE
-        value: s3
-      - name: MLRUN_STORAGE__AUTO_MOUNT_PARAMS
-        value: "non_anonymous=True"
-      - name: MLRUN_FUNCTION__SPEC__SERVICE_ACCOUNT__DEFAULT
-        value: mlrun-jobs-sa
-      - name: MLRUN_ARTIFACT_PATH
-        value: s3://${MlrunBucket}/
-      - name: MLRUN_CE
-        value: "true"
+    storageClass: azurefile-csi
 minio:
   enabled: true
   rootUser: minio
@@ -119,7 +62,7 @@ minio:
       memory: 0.5Gi
   persistence:
     enabled: true
-    storageClass: aws-efs
+    storageClass: azurefile-csi
     size: 1Gi
   buckets: []
   users: []
@@ -134,7 +77,7 @@ pipelines:
   persistence:
     enabled: true
     existingClaim:
-    storageClass: aws-efs
+    storageClass: azurefile-csi
     accessMode: "ReadWriteOnce"
     size: "20Gi"
     annotations: ~
@@ -190,7 +133,7 @@ pipelines:
       tag: latest
 kube-prometheus-stack:
   fullnameOverride: monitoring
-  enabled: false
+  enabled: true
   alertmanager:
     enabled: false
   grafana:
@@ -198,7 +141,7 @@ kube-prometheus-stack:
       type: pvc
       enabled: true
       size: 10Gi
-      storageClassName: aws-efs
+      storageClassName: azurefile-csi
     grafana.ini:
       auth.anonymous:
         enabled: true
@@ -216,6 +159,7 @@ kube-prometheus-stack:
     fullnameOverride: state-metrics
   prometheus-node-exporter:
     fullnameOverride: node-exporter
+
 EOF
 
 
