@@ -112,22 +112,22 @@
     }
   },
   "resources": [
-      {
-        "type": "Microsoft.ContainerRegistry/registries",
-        "apiVersion": "2021-09-01",
-        "name": "[parameters('clusterName')]",
-        "location": "[parameters('location')]",
-        "tags": {
-          "displayName": "Container Registry",
-          "container.registry": "[parameters('clusterName')]"
-        },
-        "sku": {
-          "name": "Basic"
-        },
-        "properties": {
-          "adminUserEnabled": "false"
-        }
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2021-09-01",
+      "name": "[parameters('clusterName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "Container Registry",
+        "container.registry": "[parameters('clusterName')]"
       },
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "adminUserEnabled": "false"
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-09-01",
@@ -211,10 +211,6 @@
           },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
-          },
-          "dnsPrefix": {
-            "value": "[parameters('dnsPrefix')]"
-          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -284,14 +280,6 @@
                 "description": "Public Helm App Name"
               }
             },
-            "dnsPrefix": {
-              "type": "string",
-              "defaultValue": "devmlurncesystem01",
-              "metadata": {
-                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
-              }
-            },
-
           },
           "variables": {
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
@@ -363,10 +351,6 @@
                   {
                     "name": "CONTAINER_REGISTRY_NAME",
                     "secureValue": "https://[parameters('helmAppName')].azurecr.io"
-                  },
-                  {
-                    "name": "DNS_PREFIX",
-                    "secureValue": "[parameters('dnsPrefix')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
