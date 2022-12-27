@@ -55,10 +55,10 @@
         "container.registry": "[parameters('acrName')]"
       },
       "sku": {
-        "name": "[parameters('acrSku')]"
+        "name": "Basic"
       },
       "properties": {
-        "adminUserEnabled": "[parameters('acrAdminUserEnabled')]"
+        "adminUserEnabled": "false"
       }
     }
   ],
