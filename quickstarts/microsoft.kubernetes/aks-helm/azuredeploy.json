@@ -351,7 +351,7 @@
                   },
                   {
                     "name": "CONTAINER_REGISTRY_NAME",
-                    "secureValue": "[reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('clusterName'))).loginServer]"
+                    "secureValue": "https://[parameters('helmAppName')].azurecr.io"
                   },
                   {
                     "name": "DNS_PREFIX",
