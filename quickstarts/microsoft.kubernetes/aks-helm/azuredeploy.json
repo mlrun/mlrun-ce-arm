@@ -300,9 +300,8 @@
             },
             {
               "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-08-01-preview",
+              "apiVersion": "2020-04-01-preview",
               "name": "[variables('roleAssignmentName')]",
-              "scope": "[concat('\"',subscription().subscriptionId,'\"')]",
               "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
