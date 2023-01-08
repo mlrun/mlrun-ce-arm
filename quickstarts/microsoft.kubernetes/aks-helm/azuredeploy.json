@@ -301,7 +301,7 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2020-04-01-preview",
-              "scope": "[subscription().subscriptionId]",
+              "scope": "[guid(subscription().subscriptionId)]",
               "name": "[variables('roleAssignmentName')]",
               "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
