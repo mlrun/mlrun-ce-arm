@@ -39,6 +39,7 @@ targetScope = 'subscription'
 
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: roleAssignmentName
+  scope: subscription
   properties: {
     roleDefinitionId: roleDefinitionId 
     principalId     : managedIdentity.properties.principalId
