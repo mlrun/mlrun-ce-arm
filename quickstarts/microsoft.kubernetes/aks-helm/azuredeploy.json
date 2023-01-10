@@ -288,7 +288,7 @@
           "variables": {
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
             "identityName": "[format('scratch{0}', uniqueString(resourceGroup().id))]",
-            "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+            "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
             "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]"
           },
           "resources": [
@@ -302,7 +302,6 @@
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2020-04-01-preview",
               "name": "[variables('roleAssignmentName')]",
-              "scope": "[concat(subscription().id, '/resourceGroups/', resourceGroup().name)]",
               "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",

@@ -45,6 +45,20 @@ param helmApp string = 'mlrun-marketplace/mlrun-ce'
 @description('Public Helm App Name')
 param helmAppName string = 'mlrun-ce'
 
+
+
+var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, aks.id, acrPullRoleDefinitionId)
+  scope: acr
+  properties: {
+    principalId: aks.properties.identityProfile.kubeletidentity.objectId
+    roleDefinitionId: acrPullRoleDefinitionId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+
 resource aks 'Microsoft.ContainerService/managedClusters@2020-09-01' = {
   name: clusterName
   location: location
