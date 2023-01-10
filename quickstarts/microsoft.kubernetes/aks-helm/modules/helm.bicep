@@ -45,7 +45,7 @@ resource ownerRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: roleAssignmentName
   properties: {
-    roleDefinitionId: contributorRoleDefinition.id
+    roleDefinitionId: ownerRoleDefinition.id
     principalId     : managedIdentity.properties.principalId
     principalType   : 'ServicePrincipal'
   }
