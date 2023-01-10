@@ -13,7 +13,7 @@ az aks install-cli
 az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
 
 # Attach an ACR to an AKS cluster
-#az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
+az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
 # Create Namespace
