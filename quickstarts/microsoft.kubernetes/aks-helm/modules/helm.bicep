@@ -35,8 +35,9 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
   location: location
 }
 
+targetScope = 'subscription'
+
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: '/'
   name: roleAssignmentName
   properties: {
     roleDefinitionId: roleDefinitionId 
