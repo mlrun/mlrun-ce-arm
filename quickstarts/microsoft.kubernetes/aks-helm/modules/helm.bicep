@@ -1,5 +1,5 @@
 @description('Location of all resources to be deployed')
-param location string = resourceGroup().location
+param location string = 'eastus2'
 
 @description('The base URI where artifacts required by this template are located')
 param _artifactsLocation string = deployment().properties.templateLink.uri
