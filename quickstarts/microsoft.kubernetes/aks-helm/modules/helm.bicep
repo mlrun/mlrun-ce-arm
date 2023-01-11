@@ -35,13 +35,12 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
   location: location
 }
 
-targetScope = 'subscription'
+
 
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: roleAssignmentName
-  scope: subscription
   properties: {
-    roleDefinitionId: roleDefinitionId 
+    roleDefinitionId: ownerRoleDefinition.id
     principalId     : managedIdentity.properties.principalId
     principalType   : 'ServicePrincipal'
   }
