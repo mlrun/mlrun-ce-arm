@@ -2,7 +2,7 @@
 param clusterName string = 'devmlurncesystem01'
 
 @description('The location of the Managed Cluster resource.')
-param location string
+param location string = resourceGroup().location
 
 @description('Optional DNS prefix to use with hosted Kubernetes API server FQDN.')
 param dnsPrefix string

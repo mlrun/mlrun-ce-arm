@@ -1,5 +1,5 @@
 @description('Location of all resources to be deployed')
-param location string
+param location string = resourceGroup().location
 
 @description('The base URI where artifacts required by this template are located')
 param _artifactsLocation string = deployment().properties.templateLink.uri
@@ -27,7 +27,7 @@ param helmAppName string = 'mlrun-ce'
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
-var roleDefinitionId   = '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
+var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
@@ -35,16 +35,9 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
   location: location
 }
 
-targetScope = 'subscription'
-
-resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
-  scope: subscription()
-  name: RoleDefinitionId
-}
-
-
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(subscription().subscriptionId, RoleDefinitionId, principalId)
+  scope: resourceGroup()
+  name: roleAssignmentName
   properties: {
     roleDefinitionId: roleDefinitionId
     principalId     : managedIdentity.properties.principalId

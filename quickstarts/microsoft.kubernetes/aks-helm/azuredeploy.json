@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "metadata": {
     "_generator": {
@@ -18,7 +18,7 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "eastus2",
+      "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "The location of the Managed Cluster resource."
       }
@@ -217,7 +217,7 @@
           }
         },
         "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "metadata": {
             "_generator": {
@@ -229,7 +229,7 @@
           "parameters": {
             "location": {
               "type": "string",
-              "defaultValue": "eastus2",
+              "defaultValue": "[resourceGroup().location]",
               "metadata": {
                 "description": "Location of all resources to be deployed"
               }
@@ -303,7 +303,6 @@
               "apiVersion": "2020-04-01-preview",
               "name": "[variables('roleAssignmentName')]",
               "properties": {
-                "scope": "subscription().id",
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
                 "principalType": "ServicePrincipal"
