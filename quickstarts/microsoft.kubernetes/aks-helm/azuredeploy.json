@@ -182,6 +182,15 @@
       }
     },
     {
+      "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[concat(parameters('clusterName'), '/Microsoft.Authorization/', guid(parameters('clusterName')))]",
+      "properties": {
+        "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d",
+        "principalId": "[reference(reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))).id, '2020-03-01').identityProfile.kubeletidentity.objectId]"
+      }
+    },
+    {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "HelmScripts",
@@ -300,24 +309,10 @@
             },
             {
               "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2021-04-01-preview",
+              "apiVersion": "2020-04-01-preview",
               "name": "[variables('roleAssignmentName')]",
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "principalType": "ServicePrincipal"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2021-04-01-preview",
-              "name": "guid(resourceGroup().id, azureContainerRegistry, 'AcrPullTestUserAssigned')",
-              "properties": {
-                "scop": "acr",
-                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', acrPullDefinitionId)]",
+                "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
                 "principalType": "ServicePrincipal"
               },
