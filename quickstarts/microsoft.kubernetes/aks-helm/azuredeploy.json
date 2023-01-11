@@ -303,9 +303,8 @@
               "apiVersion": "2022-04-01",
               "name": "[variables('roleAssignmentName')]",
               "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "scope": "[subscription().id]",
                 "principalType": "ServicePrincipal"
               },
               "dependsOn": [
