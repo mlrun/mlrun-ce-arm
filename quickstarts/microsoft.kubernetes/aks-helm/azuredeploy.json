@@ -9,6 +9,13 @@
     }
   },
   "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "eastus2",
+      "metadata": {
+        "description": "Location of all resources to be deployed"
+      }
+    },
     "clusterName": {
       "type": "string",
       "defaultValue": "devmlurncesystem01",
