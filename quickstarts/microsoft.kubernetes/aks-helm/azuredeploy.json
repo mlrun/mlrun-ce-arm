@@ -304,7 +304,7 @@
               "name": "[variables('roleAssignmentName')]",
               "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "scope": "[subscription().subscriptionId]",
+                "scope": "[subscription()]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
                 "principalType": "ServicePrincipal"
               },
