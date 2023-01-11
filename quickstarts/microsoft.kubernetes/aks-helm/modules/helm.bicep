@@ -35,12 +35,18 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
   location: location
 }
 
+targetScope = 'subscription'
+
+resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
+  scope: subscription()
+  name: RoleDefinitionId
+}
 
 
-resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: roleAssignmentName
+resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(subscription().subscriptionId, RoleDefinitionId, principalId)
   properties: {
-    roleDefinitionId: ownerRoleDefinition.id
+    roleDefinitionId: roleDefinitionId
     principalId     : managedIdentity.properties.principalId
     principalType   : 'ServicePrincipal'
   }
