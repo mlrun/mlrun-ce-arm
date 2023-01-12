@@ -216,37 +216,6 @@
             "value": "[parameters('helmAppName')]"
           }
         },
-        "template": {  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.5.6.12127",
-              "templateHash": "2227781763411200690"
-            }
-          },
-          "variables": {
-            "roleDefName": "[guid(subscription().id]"
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Authorization/roleDefinitions",
-              "apiVersion": "2018-07-01",
-              "name": "[variables('roleDefName')]",
-              "properties": {
-                "roleName": "[parameters('roleName')]",
-                "type": "customRole",
-                "permissions": [
-                  {
-                    "actions": "['Microsoft.Resources/subscriptions/resourceGroups/read']",
-                  }
-                ],
-                "assignableScopes": [
-                  "[subscription().id]"
-                ]
-              }
-            }
-          ]},
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
@@ -330,6 +299,19 @@
               "location": "[parameters('location')]"
             },
             {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-04-01-preview",
+              "name": "[variables('roleAssignmentName')]",
+              "properties": {
+                "roleDefinitionId": "[variables('roleDefinitionId')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+              ]
+            },
+            {
               "type": "Microsoft.Resources/deploymentScripts",
               "apiVersion": "2020-10-01",
               "name": "customScript",
@@ -376,6 +358,7 @@
                 "retentionInterval": "P1D"
               },
               "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
               ]
             }
