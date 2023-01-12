@@ -226,7 +226,7 @@
             }
           },
           "variables": {
-            "roleDefName": "[guid(subscription().id, string(parameters('actions')), string(parameters('notActions')))]"
+            "roleDefName": "[guid(subscription().id]"
           },
           "resources": [
             {
