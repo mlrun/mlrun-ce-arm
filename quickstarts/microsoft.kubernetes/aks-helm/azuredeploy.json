@@ -299,19 +299,6 @@
               "location": "[parameters('location')]"
             },
             {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[variables('roleAssignmentName')]",
-              "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "principalType": "ServicePrincipal"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-              ]
-            },
-            {
               "type": "Microsoft.Resources/deploymentScripts",
               "apiVersion": "2020-10-01",
               "name": "customScript",
@@ -358,7 +345,6 @@
                 "retentionInterval": "P1D"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
               ]
             }
