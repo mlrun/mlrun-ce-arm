@@ -4,14 +4,23 @@ set -e
 sleep 30
 # Download and install Helm
 wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
+echo "debug1"
+
 tar -zxvf helm.tgz
+echo "debug2"
+
 mv linux-amd64/helm /usr/local/bin/helm
+echo "debug3"
+
 # Install kubectl
-#az aks install-cli
+az aks install-cli
+
+echo "debug4"
 
 # Get cluster credentials
 az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
 
+echo "debug5"
 # Attach an ACR to an AKS cluster
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
