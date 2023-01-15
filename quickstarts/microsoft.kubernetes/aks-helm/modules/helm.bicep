@@ -27,7 +27,7 @@ param helmAppName string = 'mlrun-ce'
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
-var roleDefinitionId   = '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
+var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'a9793d2d-8b39-553d-bbee-b9eed76460c8')
 var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
@@ -35,12 +35,13 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
   location: location
 }
 
+targetScope = 'subscription'
 
-
-resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: roleAssignmentName
+resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(subscription().id, managedIdentity.properties.principalId, roleDefinitionId)
+  scope: subscription()
   properties: {
-    roleDefinitionId: ownerRoleDefinition.id
+    roleDefinitionId: roleDefinitionId
     principalId     : managedIdentity.properties.principalId
     principalType   : 'ServicePrincipal'
   }
