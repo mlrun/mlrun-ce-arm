@@ -30,22 +30,6 @@ var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
 var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'a9793d2d-8b39-553d-bbee-b9eed76460c8')
 var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
 
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: identityName
-  location: location
-}
-
-targetScope = 'subscription'
-
-resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(subscription().id, managedIdentity.properties.principalId, roleDefinitionId)
-  scope: subscription()
-  properties: {
-    roleDefinitionId: roleDefinitionId
-    principalId     : managedIdentity.properties.principalId
-    principalType   : 'ServicePrincipal'
-  }
-}
 
 resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'customScript'
