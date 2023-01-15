@@ -24,6 +24,9 @@ param helmApp string = 'mlrun-marketplace/mlrun-ce'
 @description('Public Helm App Name')
 param helmAppName string = 'mlrun-ce'
 
+@description('Public Helm App Name')
+param identityName string = 'identityName'
+
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 
@@ -34,6 +37,12 @@ resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     identityRoleAssignDeployment
   ]
   kind: 'AzureCLI'
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      identityName: {}
+    }
+  }
   properties: {
     forceUpdateTag: utcValue
     azCliVersion: '2.10.1'
