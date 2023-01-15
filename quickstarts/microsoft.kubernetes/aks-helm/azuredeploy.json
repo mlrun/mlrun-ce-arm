@@ -103,6 +103,13 @@
         "description": "Public Helm App"
       }
     },
+    "identityName": {
+      "type": "string",
+      "defaultValue": "identityName",
+      "metadata": {
+        "description": "Public Helm App"
+      }
+    },
     "helmAppName": {
       "type": "string",
       "defaultValue": "mlrun-ce",
@@ -277,6 +284,13 @@
                 "description": "Public Helm App"
               }
             },
+            "identityName": {
+              "type": "string",
+              "defaultValue": "identityName",
+              "metadata": {
+                "description": "Public Helm App"
+              }
+            },
             "helmAppName": {
               "type": "string",
               "defaultValue": "mlrun-ce",
@@ -293,25 +307,6 @@
           },
           "resources": [
             {
-              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-              "apiVersion": "2018-11-30",
-              "name": "[variables('identityName')]",
-              "location": "[parameters('location')]"
-            },
-            {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[variables('roleAssignmentName')]",
-              "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "principalType": "ServicePrincipal"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-              ]
-            },
-            {
               "type": "Microsoft.Resources/deploymentScripts",
               "apiVersion": "2020-10-01",
               "name": "customScript",
@@ -320,7 +315,7 @@
               "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')))]": {}
+                  "[parameters('identityName')]": {}
                 }
               },
               "properties": {
