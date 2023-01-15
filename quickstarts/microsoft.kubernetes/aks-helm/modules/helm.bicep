@@ -39,6 +39,7 @@ targetScope = 'subscription'
 
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(subscription().id, managedIdentity.properties.principalId, roleDefinitionId)
+  scope: subscription()
   properties: {
     roleDefinitionId: roleDefinitionId
     principalId     : managedIdentity.properties.principalId
