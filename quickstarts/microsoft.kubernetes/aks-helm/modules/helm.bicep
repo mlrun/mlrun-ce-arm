@@ -26,9 +26,6 @@ param helmAppName string = 'mlrun-ce'
 
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
-var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'a9793d2d-8b39-553d-bbee-b9eed76460c8')
-var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
-
 
 resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'customScript'
