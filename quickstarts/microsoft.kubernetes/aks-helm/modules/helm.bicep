@@ -38,7 +38,6 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
 targetScope = 'subscription'
 
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  scope: resourceGroup()
   name: guid(subscription().id, managedIdentity.properties.principalId, roleDefinitionId)
   properties: {
     roleDefinitionId: roleDefinitionId
