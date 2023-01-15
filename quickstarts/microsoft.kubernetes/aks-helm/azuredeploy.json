@@ -288,7 +288,7 @@
           "variables": {
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
             "identityName": "[format('scratch{0}', uniqueString(resourceGroup().id))]",
-            "roleDefinitionId": "[(subscription().id,'/providers/Microsoft.Authorization/roleDefinitions/a9793d2d-8b39-553d-bbee-b9eed76460c8)']",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a9793d2d-8b39-553d-bbee-b9eed76460c8)')]",
             "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]"
           },
           "resources": [
