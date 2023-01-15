@@ -34,12 +34,6 @@ resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     identityRoleAssignDeployment
   ]
   kind: 'AzureCLI'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${identityName}': {}
-    }
-  }
   properties: {
     forceUpdateTag: utcValue
     azCliVersion: '2.10.1'
