@@ -219,6 +219,9 @@
           "helmApp": {
             "value": "[parameters('helmApp')]"
           },
+          "identityName": {
+            "value": "[parameters('identityName')]"
+          },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
           }
