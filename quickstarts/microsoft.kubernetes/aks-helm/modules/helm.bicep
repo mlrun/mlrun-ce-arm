@@ -30,7 +30,7 @@ param identityName string = 'identityName'
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
-var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')
 var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
