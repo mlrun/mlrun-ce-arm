@@ -313,12 +313,6 @@
               "name": "customScript",
               "location": "[parameters('location')]",
               "kind": "AzureCLI",
-              "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                  "[parameters('identityName')]": {}
-                }
-              },
               "properties": {
                 "forceUpdateTag": "[parameters('utcValue')]",
                 "azCliVersion": "2.10.1",
