@@ -428,7 +428,7 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
-                "[resourceId('Microsoft.ContainerService/managedClusters', variables('clusterName'))]"
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
               ]
             }
           ]
