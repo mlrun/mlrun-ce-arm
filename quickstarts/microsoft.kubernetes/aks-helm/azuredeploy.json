@@ -372,12 +372,12 @@
                       }
                     ]
                   }
-                },
-                "dependsOn": [
-                  "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-                ]
-              }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+              ]
             },
             {
               "type": "Microsoft.Resources/deploymentScripts",
