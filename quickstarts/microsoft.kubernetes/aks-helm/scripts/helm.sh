@@ -20,6 +20,9 @@ echo "debug4"
 # Get cluster credentials
 az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
 echo "debug5"
+
+az account show
+
 # Attach an ACR to an AKS cluster
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
