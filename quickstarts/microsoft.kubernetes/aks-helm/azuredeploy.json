@@ -147,40 +147,6 @@
         "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterName'))]"
       ]
     },
-
-
-    {
-      "type": "Microsoft.ContainerService/managedClusters",
-      "apiVersion": "2020-09-01",
-      "name": "[parameters('clusterName')]",
-      "location": "[parameters('location')]",
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "properties": {
-        "dnsPrefix": "[parameters('dnsPrefix')]",
-        "agentPoolProfiles": [
-          {
-            "name": "agentpool",
-            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
-            "count": "[parameters('agentCount')]",
-            "vmSize": "[parameters('agentVMSize')]",
-            "osType": "Linux",
-            "mode": "System"
-          }
-        ],
-        "linuxProfile": {
-          "adminUsername": "[parameters('linuxAdminUsername')]",
-          "ssh": {
-            "publicKeys": [
-              {
-                "keyData": "[parameters('sshRSAPublicKey')]"
-              }
-            ]
-          }
-        }
-      }
-    },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -312,6 +278,45 @@
               ]
             },
             {
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2020-09-01",
+              "name": "[parameters('clusterName')]",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')))]": {}
+                }
+              },
+              "properties": {
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "agentPoolProfiles": [
+                  {
+                    "name": "agentpool",
+                    "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+                    "count": "[parameters('agentCount')]",
+                    "vmSize": "[parameters('agentVMSize')]",
+                    "osType": "Linux",
+                    "mode": "System"
+                  }
+                ],
+                "linuxProfile": {
+                  "adminUsername": "[parameters('linuxAdminUsername')]",
+                  "ssh": {
+                    "publicKeys": [
+                      {
+                        "keyData": "[parameters('sshRSAPublicKey')]"
+                      }
+                    ]
+                  }
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                ]
+              }
+            },
+            {
               "type": "Microsoft.Resources/deploymentScripts",
               "apiVersion": "2020-10-01",
               "name": "customScript",
@@ -359,7 +364,8 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[resourceId('Microsoft.ContainerService/managedClusters', variables('clusterName'))]"
               ]
             }
           ]
