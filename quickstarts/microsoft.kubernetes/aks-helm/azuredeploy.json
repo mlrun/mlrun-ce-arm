@@ -348,7 +348,7 @@
               "name": "nested-role-assignment",
               "apiVersion": "2017-05-10",
               "resourceGroup": "[variables('resourceGroupNew')]",
-              "subscriptionId": "[subscription().id]",
+              "subscriptionId": "[subscription().subscriptionId]",
               "dependsOn": [
                 "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
               ],
