@@ -44,6 +44,14 @@ resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2
   }
 }
 
+resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: roleAssignmentNameNew
+  properties: {
+    roleDefinitionId: roleDefinitionId
+    principalId     : managedIdentity.properties.principalId
+    principalType   : 'ServicePrincipal'
+  }
+}
 resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'customScript'
   location: location
