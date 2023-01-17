@@ -103,13 +103,6 @@
         "description": "Public Helm App"
       }
     },
-    "identityName": {
-      "type": "string",
-      "defaultValue": "identityName",
-      "metadata": {
-        "description": "Public Helm App"
-      }
-    },
     "helmAppName": {
       "type": "string",
       "defaultValue": "mlrun-ce",
@@ -280,13 +273,6 @@
             "helmApp": {
               "type": "string",
               "defaultValue": "mlrun-marketplace/mlrun-ce",
-              "metadata": {
-                "description": "Public Helm App"
-              }
-            },
-            "identityName": {
-              "type": "string",
-              "defaultValue": "identityName",
               "metadata": {
                 "description": "Public Helm App"
               }

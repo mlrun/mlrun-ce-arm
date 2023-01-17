@@ -24,9 +24,6 @@ param helmApp string = 'mlrun-marketplace/mlrun-ce'
 @description('Public Helm App Name')
 param helmAppName string = 'mlrun-ce'
 
-@description('Public Helm App Name')
-param identityName string = 'identityName'
-
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
