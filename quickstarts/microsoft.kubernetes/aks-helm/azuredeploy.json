@@ -169,6 +169,24 @@
           "clusterName": {
             "value": "[parameters('clusterName')]"
           },
+          "dnsPrefix": {
+            "value": "[parameters('dnsPrefix')]"
+          },
+          "osDiskSizeGB": {
+            "value": "[parameters('osDiskSizeGB')]"
+          },
+          "agentCount": {
+            "value": "[parameters('agentCount')]"
+          },
+          "agentVMSize": {
+            "value": "[parameters('agentVMSize')]"
+          },
+          "linuxAdminUsername": {
+            "value": "[parameters('linuxAdminUsername')]"
+          },
+          "sshRSAPublicKey": {
+            "value": "[parameters('sshRSAPublicKey')]"
+          },
           "helmRepo": {
             "value": "[parameters('helmRepo')]"
           },
@@ -198,6 +216,51 @@
               "defaultValue": "[resourceGroup().location]",
               "metadata": {
                 "description": "Location of all resources to be deployed"
+              }
+            },
+            "dnsPrefix": {
+              "type": "string",
+              "defaultValue": "devmlurncesystem01",
+              "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+              }
+            },
+            "osDiskSizeGB": {
+              "type": "int",
+              "defaultValue": 40,
+              "maxValue": 1023,
+              "minValue": 0,
+              "metadata": {
+                "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+              }
+            },
+            "agentCount": {
+              "type": "int",
+              "defaultValue": 3,
+              "maxValue": 50,
+              "minValue": 1,
+              "metadata": {
+                "description": "The number of nodes for the cluster."
+              }
+            },
+            "agentVMSize": {
+              "type": "string",
+              "defaultValue": "Standard_D2s_v3",
+              "metadata": {
+                "description": "The size of the Virtual Machine."
+              }
+            },
+            "linuxAdminUsername": {
+              "type": "string",
+              "defaultValue": "azureuser",
+              "metadata": {
+                "description": "User name for the Linux Virtual Machines."
+              }
+            },
+            "sshRSAPublicKey": {
+              "type": "string",
+              "metadata": {
+                "description": "Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
               }
             },
             "_artifactsLocation": {
