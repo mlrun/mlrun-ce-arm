@@ -319,6 +319,7 @@
             "identityName": "[format('scratch{0}', uniqueString(resourceGroup().id))]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
             "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]",
+            "resourceGroupNewA": "[concat('MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
             "resourceGroupNew": "[concat(subscription().id,'/resourceGroups/','MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
             "roleAssignmentNameNew": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('resourceGroupNew'))]"
 
@@ -347,7 +348,7 @@
               "type": "Microsoft.Resources/deployments",
               "name": "nested-role-assignment",
               "apiVersion": "2017-05-10",
-              "resourceGroup": "[variables('resourceGroupNew')]",
+              "resourceGroup": "[variables('resourceGroupNewA')]",
               "subscriptionId": "[subscription().subscriptionId]",
               "dependsOn": [
                 "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
