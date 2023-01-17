@@ -346,7 +346,7 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2020-04-01-preview",
-              "name": "[variables('roleAssignmentName')]",
+              "name": "[variables('roleAssignmentNameNew')]",
               "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
