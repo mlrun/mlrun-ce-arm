@@ -320,7 +320,7 @@
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
             "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]",
             "resourceGroupNew": "[concat(subscription().id,'/resourceGroups/','MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
-            "roleAssignmentNameNew": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('resourceGroupNew'))]"
+            "roleAssignmentNameNew": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('resourceGroupNew'))]",
 
           },
           "resources": [
@@ -344,19 +344,33 @@
               ]
             },
             {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[variables('roleAssignmentNameNew')]",
-              "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "principalType": "ServicePrincipal"
-              },
+              "type": "Microsoft.Resources/deployments",
+              "name": "nested-role-assignment",
+              "apiVersion": "2017-05-10",
+              "resourceGroup": "[variables('resourceGroupNew')]",
+              "subscriptionId": "[subscription().id]",
               "dependsOn": [
-                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
                 "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
-              ]
+              ],
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[variables('roleAssignmentNameNew')]",
+                      "properties": {
+                        "roleDefinitionId": "[variables('roleDefinitionId')]",
+                        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
+                        "principalType": "ServicePrincipal"
+                      }
+                    }
+                  ]
+                }
+              }
             },
             {
               "type": "Microsoft.ContainerService/managedClusters",
