@@ -372,11 +372,6 @@
         }
       }
     }
-  ],
-//  "outputs": {
-//    "controlPlaneFQDN": {
-//      "type": "string",
-//      "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))).fqdn]"
-//    }
-//  }
+  ]
+
 }
