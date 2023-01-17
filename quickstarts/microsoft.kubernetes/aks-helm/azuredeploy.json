@@ -312,7 +312,7 @@
                 },
                 "dependsOn": [
                   "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                  "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
                 ]
               }
             },
