@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-sleep 60
+sleep 220
 # Download and install Helm
 #wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 echo "debug1"
