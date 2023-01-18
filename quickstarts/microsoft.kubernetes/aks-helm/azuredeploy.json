@@ -393,14 +393,18 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
-                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
               ]
             }
           ]
         }
       }
     }
-  ]
-
+  ],
+  "outputs": {
+    "controlPlaneFQDN": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))).fqdn]"
+    }
+  }
 }
