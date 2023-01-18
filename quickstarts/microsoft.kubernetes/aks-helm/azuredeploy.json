@@ -465,6 +465,7 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[resourceId('Microsoft.Resources/deployments', 'nested-role-assignment')]",
                 "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
               ]
             }
