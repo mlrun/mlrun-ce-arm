@@ -323,8 +323,7 @@
             "resourceGroupNew": "[concat(subscription().id,'/resourceGroups/','MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
             "roleAssignmentNameNew": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('resourceGroupNew'))]",
             "roleAssignmentNameNew2": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')),   subscription().id  )]",
-            "resourceGroupNewB": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('location'))]",
-            "roleAssignmentNameNew3": "[guid(subscription().id, resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')).principalId, variables('roleDefinitionId'))]"
+            "resourceGroupNewB": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('location'))]"
 
 
           },
@@ -366,7 +365,7 @@
                     {
                       "type": "Microsoft.Authorization/roleAssignments",
                       "apiVersion": "2020-04-01-preview",
-                      "name": "[variables('roleAssignmentNameNew3')]",
+                      "name": "[guid(subscription().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId, variables('roleDefinitionId'))]",
                       "properties": {
                         "roleDefinitionId": "[variables('roleDefinitionId')]",
                         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
