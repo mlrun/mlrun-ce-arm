@@ -25,9 +25,16 @@ az account show
 
 # Attach an ACR to an AKS cluster
 
-export KUBE_ID=`az aks show -g $RESOURCEGROU -n $CLUSTER_NAME --query identityProfile.kubeletidentity.objectId -o tsv`
-export ACR_ID=`az acr show -g $RESOURCEGROU -n $CLUSTER_NAME --query id -o tsv`
-az role assignment create --assignee $KUBE_ID --role "AcrPull" --scope $ACR_ID
+
+# Retrieve the id of the service principal configured for AKS
+CLIENT_ID=$(az aks show --resource-group $RESOURCEGROU --name $CLUSTER_NAME --query "identityProfile.kubeletidentity.clientId" --output tsv)
+
+# Retrieve the ACR registry resource id
+ACR_ID=$(az acr show --name $CLUSTER_NAME --resource-group $RESOURCEGROU --query "id" --output tsv)
+
+# Create role assignment
+az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
+
 
 
 #az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
