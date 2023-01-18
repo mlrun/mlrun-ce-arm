@@ -365,7 +365,7 @@
                     {
                       "type": "Microsoft.Authorization/roleAssignments",
                       "apiVersion": "2020-04-01-preview",
-                      "name": "[guid(subscription().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId, variables('roleDefinitionId'))]",
+                      "name": "nested-role-assignment-owner",
                       "properties": {
                         "roleDefinitionId": "[variables('roleDefinitionId')]",
                         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
@@ -465,8 +465,8 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
-                "[resourceId('Microsoft.Resources/deployments', 'nested-role-assignment')]",
-                "[resourceId('Microsoft.ContainerService/managedClusters',  guid(subscription().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId, variables('roleDefinitionId')) )]"
+                "[resourceId('Microsoft.Authorization/roleAssignments', 'nested-role-assignment-owner')]",
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
               ]
             }
           ]
