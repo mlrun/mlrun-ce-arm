@@ -24,7 +24,13 @@ echo "debug5"
 az account show
 
 # Attach an ACR to an AKS cluster
-az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
+
+export KUBE_ID=$(az aks show -g $RESOURCEGROU -n $CLUSTER_NAME --query identityProfile.kubeletidentity.objectId -o tsv)
+export ACR_ID=$(az acr show -g $RESOURCEGROU -n $CLUSTER_NAME --query id -o tsv)
+az role assignment create --assignee $KUBE_ID --role "AcrPull" --scope $ACR_ID
+
+
+#az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
 # Create Namespace
