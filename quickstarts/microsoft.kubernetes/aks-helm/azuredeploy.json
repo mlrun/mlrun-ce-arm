@@ -322,7 +322,7 @@
               "subscriptionId": "[subscription().subscriptionId]",
               "location": "[parameters('location')]",
               "dependsOn": [
-                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
               ],
               "properties": {
                 "mode": "Incremental",
