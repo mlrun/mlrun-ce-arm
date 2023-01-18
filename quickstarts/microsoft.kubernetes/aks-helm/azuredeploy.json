@@ -322,7 +322,7 @@
               "subscriptionId": "[subscription().subscriptionId]",
               "location": "[parameters('location')]",
               "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
               ],
               "properties": {
                 "mode": "Incremental",
