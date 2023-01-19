@@ -35,7 +35,7 @@ az account show
 ## Create role assignment
 #az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
 
-
+rm -rf ~/.azure/aksServicePrincipal.json
 
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
