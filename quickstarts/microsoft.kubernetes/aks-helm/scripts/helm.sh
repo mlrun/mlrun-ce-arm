@@ -13,7 +13,7 @@ echo "debug2"
 echo "debug3"
 
 # Install kubectl
-az aks install-cli
+#az aks install-cli
 
 echo "debug4"
 #
