@@ -379,7 +379,8 @@
                 "retentionInterval": "P1D"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[subscriptionResourceId('Microsoft.Resources/deployments', 'nested-role-assignment')]"
               ]
             }
           ]
