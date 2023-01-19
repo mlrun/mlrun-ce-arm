@@ -16,12 +16,12 @@ echo "debug3"
 az aks install-cli
 
 echo "debug4"
-
-# Get cluster credentials
-az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
-echo "debug5"
-
-az account show
+#
+## Get cluster credentials
+#az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
+#echo "debug5"
+#
+#az account show
 
 # Attach an ACR to an AKS cluster
 
@@ -35,7 +35,9 @@ az account show
 ## Create role assignment
 #az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
 
-rm -rf ~/.azure/aksServicePrincipal.json
+ls -ltrh ~/.azure/
+
+
 
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
