@@ -17,6 +17,8 @@ echo "debug4"
 # install helm
 # Download and install Helm
 wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
+tar -xvf helm.tgz
+mv linux-amd64/helm  .
 
 
 echo "debug5"
@@ -180,14 +182,14 @@ EOF
 
 # Install Simple Helm Chart https://github.com/bitnami/mlrun-marketplace-charts
 
-helm repo add \
+./helm repo add \
     $HELM_REPO \
     $HELM_REPO_URL
 
-helm search repo \
+./helm search repo \
     $HELM_REPO
 
-helm install \
+./helm install \
     $HELM_APP_NAME \
     $HELM_APP \
     -n $NAMESPACE \
