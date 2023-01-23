@@ -37,8 +37,22 @@ echo "debug4"
 
 
 
+az group create --name demoResourceGroupmlrun --location eastus2
 
-az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
+az acr create --resource-group demoResourceGroupmlrun  --name mycontainerregistrymlrun --sku Basic
+
+
+az aks create -g demoResourceGroupmlrun -n myManagedClustermlrun --enable-managed-identity --no-ssh-key
+
+az aks update -n myManagedClustermlrun -g demoResourceGroupmlrun --attach-acr mycontainerregistrymlrun
+
+
+#az group create --name aks-resource-group --location eastus2
+#az aks create --name aks-cluster --resource-group aks-resource-group --node-count 1 --no-ssh-key
+
+
+
+#az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
 # Create Namespace
