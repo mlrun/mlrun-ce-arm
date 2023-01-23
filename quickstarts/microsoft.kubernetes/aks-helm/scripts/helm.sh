@@ -52,18 +52,18 @@ mlrun:
     persistence:
       enabled: true
       annotations: ~
-      storageClass: azurefile-csi
+      storageClass: managed
   db:
     persistence:
       enabled: true
       annotations: ~
-      storageClass: azurefile-csi
+      storageClass: managed
 jupyterNotebook:
   mlrunUIURL:  https://mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
   persistence:
     enabled: true
     annotations: ~
-    storageClass: azurefile-csi
+    storageClass: managed
 minio:
   enabled: true
   rootUser: minio
@@ -75,7 +75,7 @@ minio:
       memory: 0.5Gi
   persistence:
     enabled: true
-    storageClass: azurefile-csi
+    storageClass: managed
     size: 1Gi
   buckets: []
   users: []
@@ -90,7 +90,7 @@ pipelines:
   persistence:
     enabled: true
     existingClaim:
-    storageClass: azurefile-csi
+    storageClass: managed
     accessMode: "ReadWriteOnce"
     size: "20Gi"
     annotations: ~
@@ -154,7 +154,7 @@ kube-prometheus-stack:
       type: pvc
       enabled: true
       size: 10Gi
-      storageClassName: azurefile-csi
+      storageClassName: managed
     grafana.ini:
       auth.anonymous:
         enabled: true
