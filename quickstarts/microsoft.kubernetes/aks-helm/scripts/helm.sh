@@ -35,24 +35,27 @@ echo "debug4"
 ## Create role assignment
 #az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
 
+az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
-az group create --name demoResourceGroupmlrun01 --location eastus2
+az aks install-cli
 
-az acr create --resource-group demoResourceGroupmlrun01  --name mycontainerregistrymlrun01 --sku Basic
-
-
-az aks create -g demoResourceGroupmlrun01 -n myManagedClustermlrun01 --enable-managed-identity --no-ssh-key
-
-az aks update -n myManagedClustermlrun01 -g demoResourceGroupmlrun01 --attach-acr mycontainerregistrymlrun01
-
+#
+#az group create --name demoResourceGroupmlrun01 --location eastus2
+#
+#az acr create --resource-group demoResourceGroupmlrun01  --name mycontainerregistrymlrun01 --sku Basic
+#
+#
+#az aks create -g demoResourceGroupmlrun01 -n myManagedClustermlrun01 --enable-managed-identity --no-ssh-key
+#
+#az aks update -n myManagedClustermlrun01 -g demoResourceGroupmlrun01 --attach-acr mycontainerregistrymlrun01
+#
 
 #az group create --name aks-resource-group --location eastus2
 #az aks create --name aks-cluster --resource-group aks-resource-group --node-count 1 --no-ssh-key
 
 
 
-#az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
 # Create Namespace
