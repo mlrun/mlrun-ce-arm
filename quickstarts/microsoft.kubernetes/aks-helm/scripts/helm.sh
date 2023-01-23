@@ -35,7 +35,6 @@ echo "debug4"
 ## Create role assignment
 #az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
 
-ls -ltrh ~/.azure/
 
 
 
