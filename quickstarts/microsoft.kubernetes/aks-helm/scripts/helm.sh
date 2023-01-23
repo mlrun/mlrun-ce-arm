@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-sleep 60
+sleep 120
 echo "debug1"
 
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
