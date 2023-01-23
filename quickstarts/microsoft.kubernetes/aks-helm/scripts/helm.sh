@@ -37,14 +37,14 @@ echo "debug4"
 
 
 
-az group create --name demoResourceGroupmlrun --location eastus2
+az group create --name demoResourceGroupmlrun01 --location eastus2
 
-az acr create --resource-group demoResourceGroupmlrun  --name mycontainerregistrymlrun --sku Basic
+az acr create --resource-group demoResourceGroupmlrun01  --name mycontainerregistrymlrun01 --sku Basic
 
 
-az aks create -g demoResourceGroupmlrun -n myManagedClustermlrun --enable-managed-identity --no-ssh-key
+az aks create -g demoResourceGroupmlrun01 -n myManagedClustermlrun01 --enable-managed-identity --no-ssh-key
 
-az aks update -n myManagedClustermlrun -g demoResourceGroupmlrun --attach-acr mycontainerregistrymlrun
+az aks update -n myManagedClustermlrun01 -g demoResourceGroupmlrun01 --attach-acr mycontainerregistrymlrun01
 
 
 #az group create --name aks-resource-group --location eastus2
