@@ -4,66 +4,31 @@ set -e
 sleep 60
 echo "debug1"
 
-#tar -zxvf helm.tgz
-echo "debug2"
-
-#mv linux-amd64/helm /usr/local/bin/helm
-echo "debug3"
-
-# Install kubectl
-#az aks install-cli
-
-echo "debug4"
-#
-## Get cluster credentials
-#az aks get-credentials -g $RESOURCEGROUP -n $CLUSTER_NAME
-#echo "debug5"
-#
-#az account show
-
-# Attach an ACR to an AKS cluster
-
-#
-## Retrieve the id of the service principal configured for AKS
-#CLIENT_ID=$(az aks show --resource-group $RESOURCEGROU --name $CLUSTER_NAME --query "identityProfile.kubeletidentity.clientId" --output tsv)
-#
-## Retrieve the ACR registry resource id
-#ACR_ID=$(az acr show --name $CLUSTER_NAME --resource-group $RESOURCEGROU --query "id" --output tsv)
-#
-## Create role assignment
-#az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
-
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
+echo "debug2"
 
 
 az aks install-cli
+echo "debug3"
 
 az aks get-credentials --resource-group $RESOURCEGROUP --name $CLUSTER_NAME
+echo "debug4"
 
-
-#
-#az group create --name demoResourceGroupmlrun01 --location eastus2
-#
-#az acr create --resource-group demoResourceGroupmlrun01  --name mycontainerregistrymlrun01 --sku Basic
-#
-#
-#az aks create -g demoResourceGroupmlrun01 -n myManagedClustermlrun01 --enable-managed-identity --no-ssh-key
-#
-#az aks update -n myManagedClustermlrun01 -g demoResourceGroupmlrun01 --attach-acr mycontainerregistrymlrun01
-#
-
-#az group create --name aks-resource-group --location eastus2
-#az aks create --name aks-cluster --resource-group aks-resource-group --node-count 1 --no-ssh-key
-
-
+# install helm
 # Download and install Helm
 wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 
+
+echo "debug5"
+CONTAINER_REGISTRY_NAME="$CLUSTER_NAME.azurecr.io"
 
 
 # Create Namespace
 NAMESPACE="mlrun"
 kubectl create namespace $NAMESPACE
+
+echo "debug6"
+
 
 
 cat << EOF > overide-env.yaml
@@ -78,7 +43,7 @@ nuclio:
     imageNamePrefixTemplate: ${CLUSTER_NAME}-{{ .ProjectName }}-{{ .FunctionName }}-
 mlrun:
   nuclio:
-    uiURL:  "https://nuclio.${CLUSTER_NAME}.${DNS_PREFIX}"
+    uiURL:  https://nuclio.${CLUSTER_NAME}.${DNS_PREFIX}
   storage: filesystem
   api:
     fullnameOverride: mlrun-api
@@ -92,7 +57,7 @@ mlrun:
       annotations: ~
       storageClass: azurefile-csi
 jupyterNotebook:
-  mlrunUIURL:  https://mlrun.${EKSClusterName}.${ClusterDomain}
+  mlrunUIURL:  https://mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
   persistence:
     enabled: true
     annotations: ~

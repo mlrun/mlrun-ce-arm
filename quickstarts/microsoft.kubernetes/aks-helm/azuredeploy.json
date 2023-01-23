@@ -211,6 +211,9 @@
           },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
+          },
+          "dnsPrefix": {
+            "value": "[parameters('dnsPrefix')]"
           }
         },
         "template": {
@@ -279,6 +282,13 @@
               "defaultValue": "mlrun-ce",
               "metadata": {
                 "description": "Public Helm App Name"
+              }
+            },
+            "dnsPrefix": {
+              "type": "string",
+              "defaultValue": "[parameters('dnsPrefix')]",
+              "metadata": {
+                "description": "dns Prefix"
               }
             }
           },
@@ -372,6 +382,10 @@
                   {
                     "name": "HELM_APP_NAME",
                     "secureValue": "[parameters('helmAppName')]"
+                  },
+                  {
+                    "name": "DNS_PREFIX",
+                    "secureValue": "[parameters('dnsPrefix')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
