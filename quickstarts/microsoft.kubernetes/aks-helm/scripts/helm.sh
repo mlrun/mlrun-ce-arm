@@ -2,8 +2,6 @@
 set -e
 
 sleep 60
-# Download and install Helm
-#wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 echo "debug1"
 
 #tar -zxvf helm.tgz
@@ -40,6 +38,9 @@ az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 az aks install-cli
 
+az aks get-credentials --resource-group $RESOURCEGROUP --name $CLUSTER_NAME
+
+
 #
 #az group create --name demoResourceGroupmlrun01 --location eastus2
 #
@@ -55,6 +56,8 @@ az aks install-cli
 #az aks create --name aks-cluster --resource-group aks-resource-group --node-count 1 --no-ssh-key
 
 
+# Download and install Helm
+wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 
 
 
