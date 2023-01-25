@@ -191,7 +191,7 @@ RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREF
 
 # install ingress cluster
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
-sleep 35
+sleep 90
 echo "debug 10"
 IP=`kubectl get svc -n ingress-nginx ingress-nginx-controller  | grep LoadBalancer  | awk '{print $4}'`
 sleep 10
