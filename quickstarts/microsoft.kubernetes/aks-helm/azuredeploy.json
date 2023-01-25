@@ -25,9 +25,16 @@
     },
     "dnsPrefix": {
       "type": "string",
-      "defaultValue": "devmlurncesystem01",
+      "defaultValue": "your.existing.domain",
       "metadata": {
         "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+      }
+    },
+    "remoteAccessCIDR": {
+      "type": "string",
+      "defaultValue": "your.existing.domain",
+      "metadata": {
+        "description": "who can access to cluster prefix separated by comma"
       }
     },
     "osDiskSizeGB": {
@@ -121,7 +128,7 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "dnsPrefix": "[parameters('dnsPrefix')]",
+        "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
           {
             "name": "agentpool",
@@ -214,6 +221,9 @@
           },
           "dnsPrefix": {
             "value": "[parameters('dnsPrefix')]"
+          },
+          "remoteAccessCIDR": {
+            "value": "[parameters('remoteAccessCIDR')]"
           }
         },
         "template": {
@@ -289,6 +299,13 @@
               "defaultValue": "[parameters('dnsPrefix')]",
               "metadata": {
                 "description": "dns Prefix"
+              }
+            },
+            "remoteAccessCIDR": {
+              "type": "string",
+              "defaultValue": "[parameters('remoteAccessCIDR')]",
+              "metadata": {
+                "description": "remoteAccessCIDR"
               }
             }
           },
@@ -386,6 +403,10 @@
                   {
                     "name": "DNS_PREFIX",
                     "secureValue": "[parameters('dnsPrefix')]"
+                  },
+                  {
+                    "name": "REMOTE_ACCESS_CIDR",
+                    "secureValue": "[parameters('remoteAccessCIDR')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",

@@ -2,26 +2,16 @@
 set -e
 
 sleep 120
-echo "debug1"
 
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
-echo "debug2"
-
-
 az aks install-cli
-echo "debug3"
-
 az aks get-credentials --resource-group $RESOURCEGROUP --name $CLUSTER_NAME
-echo "debug4"
-
 # install helm
 # Download and install Helm
 wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 tar -xvf helm.tgz
 mv linux-amd64/helm  .
 
-
-echo "debug5"
 CONTAINER_REGISTRY_NAME="$CLUSTER_NAME.azurecr.io"
 
 
@@ -29,7 +19,6 @@ CONTAINER_REGISTRY_NAME="$CLUSTER_NAME.azurecr.io"
 NAMESPACE="mlrun"
 kubectl create namespace $NAMESPACE
 
-echo "debug6"
 
 
 
@@ -193,7 +182,99 @@ EOF
     $HELM_APP_NAME \
     $HELM_APP \
     -n $NAMESPACE \
-    --set global.imagePullSecrets={emptysecret} \
     -f overide-env.yaml
+
+
+
+
+
+
+# install ingress cluster
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
+sleep 35
+echo "debug 10"
+IP=`kubectl get svc -n ingress-nginx ingress-nginx-controller  | grep LoadBalancer  | awk '{print $4}'`
+sleep 10
+echo "debug 20"
+PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
+
+echo "debug 30"
+az network dns record-set a create -g ${RESOURCEGROUP_DOMAIN_NAME}  -n *.${CLUSTER_NAME} -z ${DOMAIN_NAME} --target-resource ${PUBLICIPID}
+
+echo "debug 40"
+
+
+cat << EOF > mlrun-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/whitelist-source-range: ${REMOTE_ACCESS_CIDR}
+  name: mlrun-ingress
+  namespace: mlrun
+spec:
+  rules:
+  - host: mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
+    http:
+      paths:
+      - backend:
+          service:
+            name: mlrun-ui
+            port:
+              number: 80
+        path: /*
+        pathType: ImplementationSpecific
+  - host: mlrun-api.${CLUSTER_NAME}.${DNS_PREFIX}
+    http:
+      paths:
+      - backend:
+          service:
+            name: mlrun-api
+            port:
+              number: 8080
+        path: /*
+        pathType: ImplementationSpecific
+  - host: nuclio.${CLUSTER_NAME}.${DNS_PREFIX}
+    http:
+      paths:
+      - backend:
+          service:
+            name: nuclio-dashboard
+            port:
+              number: 8070
+        path: /*
+        pathType: ImplementationSpecific
+  - host: jupyter.${CLUSTER_NAME}.${DNS_PREFIX}
+    http:
+      paths:
+      - backend:
+          service:
+            name: mlrun-jupyter
+            port:
+              number: 8888
+        path: /*
+        pathType: ImplementationSpecific
+  - host: grafana.${CLUSTER_NAME}.${DNS_PREFIX}
+    http:
+      paths:
+      - backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+        path: /*
+        pathType: ImplementationSpecific
+EOF
+
+
+
+kubectl apply -f mlrun-ingress.yaml
+
+
+
+
 
 echo \{\"Status\":\"Complete\"\} > $AZ_SCRIPTS_OUTPUT_PATH
