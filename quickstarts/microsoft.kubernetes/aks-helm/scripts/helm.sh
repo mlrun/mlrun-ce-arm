@@ -212,7 +212,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/whitelist-source-range: ${REMOTE_ACCESS_CIDR}
+    nginx.ingress.kubernetes.io/whitelist-source-range: "${REMOTE_ACCESS_CIDR}"
   name: mlrun-ingress
   namespace: mlrun
 spec:
