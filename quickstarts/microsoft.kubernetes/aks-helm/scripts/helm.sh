@@ -187,7 +187,7 @@ EOF
 
 
 
-
+RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREFIX}']" | jq  .[].resourceGroup | tr -d '"'`
 
 # install ingress cluster
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
@@ -199,7 +199,7 @@ echo "debug 20"
 PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
 
 echo "debug 30"
-az network dns record-set a create -g ${RESOURCEGROUP_DOMAIN_NAME}  -n *.${CLUSTER_NAME} -z ${DOMAIN_NAME} --target-resource ${PUBLICIPID}
+az network dns record-set a create -g ${RESOURCEGROUP_DNS_PREFIX}  -n *.${CLUSTER_NAME} -z ${DNS_PREFIX} --target-resource ${PUBLICIPID}
 
 echo "debug 40"
 
