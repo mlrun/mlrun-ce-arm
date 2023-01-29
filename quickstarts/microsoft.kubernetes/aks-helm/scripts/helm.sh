@@ -79,6 +79,10 @@ mlrun:
           name: mlrun-override-env
           optional: true
     extraEnv:
+      - name: MLRUN_HTTPDB__REAL_PATH
+        value: az://
+      - name: MLRUN_ARTIFACT_PATH
+        value: az://mlrun-ce/
       - name: MLRUN_DEFAULT_TENSORBOARD_LOGS_PATH
         value: /home/jovyan/data/tensorboard/{{ `{{project}} `}}
       - name: MLRUN_CE__MODE
@@ -113,6 +117,10 @@ jupyterNotebook:
     annotations: ~
     storageClass: managed
   extraEnv:
+    - name: MLRUN_HTTPDB__REAL_PATH
+      value: az://
+    - name: MLRUN_ARTIFACT_PATH
+      value: az://mlrun-ce/
     - name: AZURE_STORAGE_CONNECTION_STRING
       valueFrom:
         secretKeyRef:
