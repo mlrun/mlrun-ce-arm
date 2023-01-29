@@ -48,8 +48,8 @@
     },
     "agentCount": {
       "type": "int",
-      "defaultValue": 3,
-      "maxValue": 50,
+      "defaultValue": 1,
+      "maxValue": 1,
       "minValue": 1,
       "metadata": {
         "description": "The number of nodes for the cluster."
@@ -57,7 +57,7 @@
     },
     "agentVMSize": {
       "type": "string",
-      "defaultValue": "Standard_D2s_v3",
+      "defaultValue": "Standard_D16s_v3",
       "metadata": {
         "description": "The size of the Virtual Machine."
       }
