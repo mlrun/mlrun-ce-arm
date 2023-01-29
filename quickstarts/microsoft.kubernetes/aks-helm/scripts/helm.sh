@@ -21,11 +21,43 @@ kubectl create namespace $NAMESPACE
 
 
 
+# install ingress cluster
+RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREFIX}']" | jq  .[].resourceGroup | tr -d '"'`
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
+sleep 130
+IP=`kubectl get svc -n ingress-nginx ingress-nginx-controller  | grep LoadBalancer  | awk '{print $4}'`
+sleep 10
+PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
+az network dns record-set a create -g ${RESOURCEGROUP_DNS_PREFIX}  -n *.${CLUSTER_NAME} -z ${DNS_PREFIX} --target-resource ${PUBLICIPID}
+
+
+
+
+# get  ACR CRED
+ACR_NAME=${CLUSTER_NAME}.azurecr.io
+ACR_USER=$(az acr credential show --name  ${CLUSTER_NAME} --resource-group $RESOURCEGROUP  --query="username" -o tsv)
+ACR_PASSWD=$(az acr credential show --name  ${CLUSTER_NAME} --resource-group $RESOURCEGROUP --query="passwords[0].value" -o tsv)
+
+# create ACR CRED
+kubectl --namespace mlrun  create secret docker-registry registry-credentials \
+  --docker-server=$ACR_NAME \
+  --docker-username=$ACR_USER \
+  --docker-password=$ACR_PASSWD \
+  --docker-email=${USER_EMAIL}
+
+
+
+
+STORAGE_CONNECTION_STRING=$(az storage account show-connection-string --name ${CLUSTER_NAME} --resource-group ${RESOURCEGROUP}   --query=connectionString| tr -d '"')
+
+kubectl create secret generic azure-storage-connection --from-literal=connectionstring=${STORAGE_CONNECTION_STRING}  -n mlrun
 
 cat << EOF > overide-env.yaml
 global:
   registry:
     url: "${CONTAINER_REGISTRY_NAME}"
+    secretName: registry-credentials
 nuclio:
   registry:
     pushPullUrl: "${CONTAINER_REGISTRY_NAME}"
@@ -42,17 +74,52 @@ mlrun:
       enabled: true
       annotations: ~
       storageClass: managed
+    envFrom:
+      - configMapRef:
+          name: mlrun-override-env
+          optional: true
+    extraEnv:
+      - name: MLRUN_DEFAULT_TENSORBOARD_LOGS_PATH
+        value: /home/jovyan/data/tensorboard/{{ `{{project}} `}}
+      - name: MLRUN_CE__MODE
+        value: full
+      - name: MLRUN_SPARK_OPERATOR_VERSION
+        value: spark-3
+      - name: MLRUN_HTTPDB__PROJECTS__FOLLOWERS
+        value: nuclio
+      - name: MLRUN_SPARK_APP_IMAGE
+        value: gcr.io/iguazio/spark-app
+      - name: MLRUN_SPARK_APP_IMAGE_TAG
+        value: v3.2.1-mlk
+      - name: MLRUN_KFP_URL
+        value: http://ml-pipeline.mlrun.svc.cluster.local:8888
+      - name: MLRUN_REDIS_URL
+        value: ${REDISUrl}
+      - name: AZURE_STORAGE_CONNECTION_STRING
+        valueFrom:
+          secretKeyRef:
+            name: azure-storage-connection
+            key: connectionstring
   db:
     persistence:
       enabled: true
       annotations: ~
       storageClass: managed
 jupyterNotebook:
+  azureInstall: true
   mlrunUIURL:  https://mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
   persistence:
     enabled: true
     annotations: ~
     storageClass: managed
+  extraEnv:
+    - name: AZURE_STORAGE_CONNECTION_STRING
+      valueFrom:
+        secretKeyRef:
+          name: azure-storage-connection
+          key: connectionstring
+    - name: MLRUN_CE
+      value: "true"
 minio:
   enabled: true
   rootUser: minio
@@ -167,8 +234,6 @@ EOF
 
 
 
-
-
 # Install Simple Helm Chart https://github.com/bitnami/mlrun-marketplace-charts
 
 ./helm repo add \
@@ -186,22 +251,7 @@ EOF
 
 
 
-
-RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREFIX}']" | jq  .[].resourceGroup | tr -d '"'`
-
-# install ingress cluster
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
-sleep 130
-echo "debug 10"
-IP=`kubectl get svc -n ingress-nginx ingress-nginx-controller  | grep LoadBalancer  | awk '{print $4}'`
-sleep 10
-echo "debug 20"
-PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
-
-echo "debug 30"
-az network dns record-set a create -g ${RESOURCEGROUP_DNS_PREFIX}  -n *.${CLUSTER_NAME} -z ${DNS_PREFIX} --target-resource ${PUBLICIPID}
-
-echo "debug 40"
+sleep 60
 
 
 cat << EOF > mlrun-ingress.yaml

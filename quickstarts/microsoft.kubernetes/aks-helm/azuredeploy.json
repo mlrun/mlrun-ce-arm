@@ -37,6 +37,13 @@
         "description": "who can access to cluster prefix separated by comma"
       }
     },
+    "userEmial": {
+      "type": "string",
+      "defaultValue": "your.existing.domain",
+      "metadata": {
+        "description": "who can access to cluster prefix separated by comma"
+      }
+    },
     "osDiskSizeGB": {
       "type": "int",
       "defaultValue": 120,
@@ -224,6 +231,9 @@
           },
           "remoteAccessCIDR": {
             "value": "[parameters('remoteAccessCIDR')]"
+          },
+          "userEmial": {
+            "value": "[parameters('userEmial')]"
           }
         },
         "template": {
@@ -306,6 +316,13 @@
               "defaultValue": "[parameters('remoteAccessCIDR')]",
               "metadata": {
                 "description": "remoteAccessCIDR"
+              }
+            },
+            "userEmial": {
+              "type": "string",
+              "defaultValue": "your.existing.domain",
+              "metadata": {
+                "description": "who can access to cluster prefix separated by comma"
               }
             }
           },
@@ -407,6 +424,10 @@
                   {
                     "name": "REMOTE_ACCESS_CIDR",
                     "secureValue": "[parameters('remoteAccessCIDR')]"
+                  },
+                  {
+                    "name": "USER_EMAIL",
+                    "secureValue": "[parameters('userEmial')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
