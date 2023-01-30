@@ -43,12 +43,12 @@ kubectl create namespace cert-manager
 kubectl label namespace cert-manager cert-manager.io/disable-validation=true
 
 # Add the Jetstack Helm repository
-helm repo add jetstack https://charts.jetstack.io
+./helm repo add jetstack https://charts.jetstack.io
 # Update your local Helm chart repository cache
-helm repo update
+./helm repo update
 
 # Install the cert-manager Helm chart
-helm install cert-manager jetstack/cert-manager \
+./helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --version v1.11.0
 
