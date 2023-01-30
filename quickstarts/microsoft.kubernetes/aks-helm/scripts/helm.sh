@@ -108,6 +108,10 @@ STORAGE_CONNECTION_STRING=$(az storage account show-connection-string --name ${C
 
 kubectl create secret generic azure-storage-connection --from-literal=connectionstring=${STORAGE_CONNECTION_STRING}  -n mlrun
 
+#set connection base
+STORAGE_CONNECTION_STRING_BASE64=$(echo {\"AZURE_STORAGE_CONNECTION_STRING\":\"${STORAGE_CONNECTION_STRING}\"}| base64)
+
+
 cat << EOF > overide-env.yaml
 global:
   registry:
@@ -134,6 +138,10 @@ mlrun:
           name: mlrun-override-env
           optional: true
     extraEnv:
+      - name: MLRUN_STORAGE__AUTO_MOUNT_TYPE
+        value: env
+      - name: MLRUN_STORAGE__AUTO_MOUNT_PARAMS
+        value: "${STORAGE_CONNECTION_STRING_BASE64}"
       - name: MLRUN_HTTPDB__REAL_PATH
         value: az://
       - name: MLRUN_ARTIFACT_PATH
@@ -172,6 +180,10 @@ jupyterNotebook:
     annotations: ~
     storageClass: managed
   extraEnv:
+    - name: MLRUN_STORAGE__AUTO_MOUNT_TYPE
+      value: env
+    - name: MLRUN_STORAGE__AUTO_MOUNT_PARAMS
+      value: "${STORAGE_CONNECTION_STRING_BASE64}"
     - name: MLRUN_HTTPDB__REAL_PATH
       value: az://
     - name: MLRUN_ARTIFACT_PATH
@@ -317,6 +329,11 @@ EOF
 sleep 60
 
 
+
+
+
+
+
 cat << EOF > mlrun-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -332,8 +349,20 @@ metadata:
 spec:
   tls:
   - hosts:
-    - *.${CLUSTER_NAME}.${DNS_PREFIX}
-    secretName: tls-secret
+    - "mlrun.${CLUSTER_NAME}.${DNS_PREFIX}"
+    secretName: mlrun-${CLUSTER_NAME}
+  - hosts:
+    - "mlrun-api.${CLUSTER_NAME}.${DNS_PREFIX}"
+    secretName: mlrun-api-${CLUSTER_NAME}
+  - hosts:
+    - "nuclio.${CLUSTER_NAME}.${DNS_PREFIX}"
+    secretName: nuclio-${CLUSTER_NAME}
+  - hosts:
+    - "jupyter.${CLUSTER_NAME}.${DNS_PREFIX}"
+    secretName: jupyter-${CLUSTER_NAME}
+  - hosts:
+    - "grafana.${CLUSTER_NAME}.${DNS_PREFIX}"
+    secretName: grafana-${CLUSTER_NAME}
   rules:
   - host: mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
     http:
