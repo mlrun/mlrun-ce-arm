@@ -109,7 +109,7 @@ STORAGE_CONNECTION_STRING=$(az storage account show-connection-string --name ${C
 kubectl create secret generic azure-storage-connection --from-literal=connectionstring=${STORAGE_CONNECTION_STRING}  -n mlrun
 
 #set connection base
-STORAGE_CONNECTION_STRING_BASE64=$(echo {\"AZURE_STORAGE_CONNECTION_STRING\":\"${STORAGE_CONNECTION_STRING}\"}| base64)
+STORAGE_CONNECTION_STRING_BASE64=$(echo {\"AZURE_STORAGE_CONNECTION_STRING\":\"${STORAGE_CONNECTION_STRING}\"}| base64  -w 0)
 
 
 cat << EOF > overide-env.yaml
