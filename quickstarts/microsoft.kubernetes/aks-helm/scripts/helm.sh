@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-sleep 120
+sleep 140
 
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 az aks install-cli
