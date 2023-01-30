@@ -330,6 +330,10 @@ metadata:
   name: mlrun-ingress
   namespace: mlrun
 spec:
+  tls:
+  - hosts:
+    - ${CLUSTER_NAME}.${DNS_PREFIX}
+    secretName: tls-secret
   rules:
   - host: mlrun.${CLUSTER_NAME}.${DNS_PREFIX}
     http:
