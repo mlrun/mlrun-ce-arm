@@ -3,57 +3,73 @@ set -e
 
 sleep 140
 
+
+###################################################
+##### update aks attach-acr  and get aks cred
+###################################################
+
 az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 az aks install-cli
 az aks get-credentials --resource-group $RESOURCEGROUP --name $CLUSTER_NAME
-# install helm
-# Download and install Helm
+
+
+###################################################
+##### Download and install Helm
+###################################################
 wget -O helm.tgz https://get.helm.sh/helm-v3.9.3-linux-amd64.tar.gz
 tar -xvf helm.tgz
 mv linux-amd64/helm  .
 
-CONTAINER_REGISTRY_NAME="$CLUSTER_NAME.azurecr.io"
-
-
-# Create Namespace
+###################################################
+##### create mlrun namespace
+###################################################
 NAMESPACE="mlrun"
 kubectl create namespace $NAMESPACE
 
 
 
-# install ingress cluster
-RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREFIX}']" | jq  .[].resourceGroup | tr -d '"'`
+
+###################################################
+##### install ingress cluster
+###################################################
 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
 sleep 130
 IP=`kubectl get svc -n ingress-nginx ingress-nginx-controller  | grep LoadBalancer  | awk '{print $4}'`
-sleep 10
+sleep 20
+
+
+###################################################
+##### update dns domain
+###################################################
+RESOURCEGROUP_DNS_PREFIX=`az network dns zone list  --query "[?name=='${DNS_PREFIX}']" | jq  .[].resourceGroup | tr -d '"'`
 PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
 az network dns record-set a create -g ${RESOURCEGROUP_DNS_PREFIX}  -n *.${CLUSTER_NAME} -z ${DNS_PREFIX} --target-resource ${PUBLICIPID}
 
 
-#
 
-
+###################################################
+##### install cert-manager
+###################################################
 # Install CRDs with kubectl
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.crds.yaml
 # Create the namespace for cert-manager
 kubectl create namespace cert-manager
 # Label the cert-manager namespace to disable resource validation
 kubectl label namespace cert-manager cert-manager.io/disable-validation=true
-
 # Add the Jetstack Helm repository
 ./helm repo add jetstack https://charts.jetstack.io
 # Update your local Helm chart repository cache
 ./helm repo update
-
 # Install the cert-manager Helm chart
 ./helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --version v1.11.0
 
 
-
+###################################################
+##### create  ClusterIssuer
+###################################################
 kubectl apply -f - <<EOF
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -89,6 +105,10 @@ EOF
 
 
 
+###################################################
+##### create  secret for ACR registry
+###################################################
+
 # get  ACR CRED
 ACR_NAME=${CLUSTER_NAME}.azurecr.io
 ACR_USER=$(az acr credential show --name  ${CLUSTER_NAME} --resource-group $RESOURCEGROUP  --query="username" -o tsv)
@@ -104,13 +124,22 @@ kubectl --namespace mlrun  create secret docker-registry registry-credentials \
 
 
 
+
+###################################################
+##### set  connection param and create secret
+###################################################
 STORAGE_CONNECTION_STRING=$(az storage account show-connection-string --name ${CLUSTER_NAME} --resource-group ${RESOURCEGROUP}   --query=connectionString| tr -d '"')
-
 kubectl create secret generic azure-storage-connection --from-literal=connectionstring=${STORAGE_CONNECTION_STRING}  -n mlrun
-
-#set connection base
 STORAGE_CONNECTION_STRING_BASE64=$(echo {\"AZURE_STORAGE_CONNECTION_STRING\":\"${STORAGE_CONNECTION_STRING}\"}| base64  -w 0)
 
+
+
+
+###################################################
+##### create overide-env.yaml
+###################################################
+
+CONTAINER_REGISTRY_NAME="$CLUSTER_NAME.azurecr.io"
 
 cat << EOF > overide-env.yaml
 global:
@@ -307,9 +336,10 @@ kube-prometheus-stack:
 EOF
 
 
+###################################################
+#####  Install mlrun ce  Helm Chart
+###################################################
 
-
-# Install Simple Helm Chart https://github.com/bitnami/mlrun-marketplace-charts
 
 ./helm repo add \
     $HELM_REPO \
@@ -324,17 +354,17 @@ EOF
     -n $NAMESPACE \
     -f overide-env.yaml
 
-
-
 sleep 60
 
 
 
 
 
+###################################################
+#####  create ingress for mlrun ce
+###################################################
 
-
-cat << EOF > mlrun-ingress.yaml
+kubectl apply -f - <<EOF
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -418,12 +448,12 @@ EOF
 
 
 
-kubectl apply -f mlrun-ingress.yaml
+
+###################################################
+#####  set output
+###################################################
 
 
 
 
-
-
-
-echo \{\"Status\":\"Complete\"\} > $AZ_SCRIPTS_OUTPUT_PATH
+echo \{\"Test\":\"TESA\"\,\"Status\":\"Complete\"\} > $AZ_SCRIPTS_OUTPUT_PATH

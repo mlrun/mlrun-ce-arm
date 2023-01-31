@@ -25,23 +25,23 @@
     },
     "dnsPrefix": {
       "type": "string",
-      "defaultValue": "your.existing.domain",
+      "defaultValue": "replace-me.com",
       "metadata": {
-        "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+        "description": "Cluster DNS name will be created in this domain"
       }
     },
     "remoteAccessCIDR": {
       "type": "string",
-      "defaultValue": "your.existing.domain",
+      "defaultValue": "",
       "metadata": {
-        "description": "who can access to cluster prefix separated by comma"
+        "description": "CIDR IP range that is permitted to access the instances and the ingress (external URL). We recommend that you set this value to a trusted IP range,  eg (192.168.1.0/24)"
       }
     },
     "userEmial": {
       "type": "string",
-      "defaultValue": "your.existing.domain",
+      "defaultValue": "replace@me.com",
       "metadata": {
-        "description": "who can access to cluster prefix separated by comma"
+        "description": "Email for ACR registry And  Let's Encrypt"
       }
     },
     "osDiskSizeGB": {
@@ -308,21 +308,21 @@
               "type": "string",
               "defaultValue": "[parameters('dnsPrefix')]",
               "metadata": {
-                "description": "dns Prefix"
+                "description": "Cluster DNS name will be created in this domain"
               }
             },
             "remoteAccessCIDR": {
               "type": "string",
               "defaultValue": "[parameters('remoteAccessCIDR')]",
               "metadata": {
-                "description": "remoteAccessCIDR"
+                "description": "CIDR IP range that is permitted to access the instances and the ingress (external URL). We recommend that you set this value to a trusted IP range,  eg (192.168.1.0/24)"
               }
             },
             "userEmial": {
               "type": "string",
-              "defaultValue": "your.existing.domain",
+              "defaultValue": "",
               "metadata": {
-                "description": "who can access to cluster prefix separated by comma"
+                "description": "Email for ACR registry And  Let's Encrypt"
               }
             }
           },
