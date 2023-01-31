@@ -1,14 +1,12 @@
 #!/bin/bash
 set -e
 
-sleep 220
-
+sleep 250
 
 ###################################################
-##### update aks attach-acr  and get aks cred
+#####  and get aks cred
 ###################################################
 
-az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 az aks install-cli
 az aks get-credentials --resource-group $RESOURCEGROUP --name $CLUSTER_NAME
 
@@ -358,6 +356,10 @@ sleep 60
 
 
 
+###################################################
+##### update aks attach-acr
+###################################################
+az aks update -n $CLUSTER_NAME -g $RESOURCEGROUP --attach-acr $CLUSTER_NAME
 
 
 ###################################################
