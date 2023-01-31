@@ -1,7 +1,26 @@
 #!/bin/bash
 set -e
 
-sleep 250
+
+
+###################################################
+##### WAIT for aks cluster to be in Succeeded state
+###################################################
+
+wait_period=0
+
+while ! [ "${cluster_status}" == "Succeeded" ] ; do
+  echo -n "wait cluster in state: ${cluster_status}"
+
+    wait_period=$(($wait_period+10))
+    if [ $wait_period -gt 600 ];then
+       echo "The script successfully ran for 10 minutes, exiting now.."
+       break
+    else
+       sleep 10
+       cluster_status=$(az aks list --output table | grep -w ${CLUSTER_NAME}| awk '{print $5}')
+    fi
+done
 
 ###################################################
 #####  and get aks cred
