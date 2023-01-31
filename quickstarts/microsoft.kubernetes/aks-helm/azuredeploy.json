@@ -146,6 +146,7 @@
             "mode": "System"
           }
         ],
+        "kubernetesVersion": "1.24",
         "linuxProfile": {
           "adminUsername": "[parameters('linuxAdminUsername')]",
           "ssh": {
