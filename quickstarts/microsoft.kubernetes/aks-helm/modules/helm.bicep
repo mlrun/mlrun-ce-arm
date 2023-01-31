@@ -13,21 +13,21 @@ param clusterName string = ''
 param utcValue string = utcNow()
 
 @description('Public Helm Repo Name')
-param helmRepo string = 'azure-marketplace'
+param helmRepo string = 'mlrun-marketplace'
 
 @description('Public Helm Repo URL')
 param helmRepoURL string = 'https://marketplace.azurecr.io/helm/v1/repo'
 
 @description('Public Helm App')
-param helmApp string = 'azure-marketplace/wordpress'
+param helmApp string = 'mlrun-marketplace/mlrun-ce'
 
 @description('Public Helm App Name')
-param helmAppName string = 'my-wordpress'
+param helmAppName string = 'mlrun-ce'
 
 var installScriptUri = uri(_artifactsLocation, 'scripts/helm.sh${_artifactsLocationSasToken}')
 
 var identityName       = 'scratch${uniqueString(resourceGroup().id)}'
-var roleDefinitionId   = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+var roleDefinitionId   = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')
 var roleAssignmentName = guid(roleDefinitionId, managedIdentity.id, resourceGroup().id)
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
@@ -36,15 +36,13 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
 }
 
 resource identityRoleAssignDeployment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  scope: resourceGroup()
   name: roleAssignmentName
   properties: {
-    roleDefinitionId: roleDefinitionId 
+    roleDefinitionId: roleDefinitionId
     principalId     : managedIdentity.properties.principalId
     principalType   : 'ServicePrincipal'
   }
 }
-
 resource customScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'customScript'
   location: location

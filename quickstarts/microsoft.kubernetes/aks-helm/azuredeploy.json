@@ -11,7 +11,7 @@
   "parameters": {
     "clusterName": {
       "type": "string",
-      "defaultValue": "aks101cluster",
+      "defaultValue": "aksmlrunsystem01",
       "metadata": {
         "description": "The name of the Managed Cluster resource."
       }
@@ -25,13 +25,28 @@
     },
     "dnsPrefix": {
       "type": "string",
+      "defaultValue": "replace-me.com",
       "metadata": {
-        "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+        "description": "Cluster DNS name will be created in this domain"
+      }
+    },
+    "remoteAccessCIDR": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "CIDR IP range that is permitted to access the instances and the ingress (external URL). We recommend that you set this value to a trusted IP range,  eg (192.168.1.0/24)"
+      }
+    },
+    "userEmial": {
+      "type": "string",
+      "defaultValue": "replace@me.com",
+      "metadata": {
+        "description": "Email for ACR registry And  Let's Encrypt"
       }
     },
     "osDiskSizeGB": {
       "type": "int",
-      "defaultValue": 0,
+      "defaultValue": 120,
       "maxValue": 1023,
       "minValue": 0,
       "metadata": {
@@ -40,8 +55,8 @@
     },
     "agentCount": {
       "type": "int",
-      "defaultValue": 3,
-      "maxValue": 50,
+      "defaultValue": 1,
+      "maxValue": 1,
       "minValue": 1,
       "metadata": {
         "description": "The number of nodes for the cluster."
@@ -49,13 +64,14 @@
     },
     "agentVMSize": {
       "type": "string",
-      "defaultValue": "Standard_D2s_v3",
+      "defaultValue": "Standard_D16s_v3",
       "metadata": {
         "description": "The size of the Virtual Machine."
       }
     },
     "linuxAdminUsername": {
       "type": "string",
+      "defaultValue": "azureuser",
       "metadata": {
         "description": "User name for the Linux Virtual Machines."
       }
@@ -82,28 +98,28 @@
     },
     "helmRepo": {
       "type": "string",
-      "defaultValue": "azure-marketplace",
+      "defaultValue": "mlrun-marketplace",
       "metadata": {
         "description": "Public Helm Repo Name"
       }
     },
     "helmRepoURL": {
       "type": "string",
-      "defaultValue": "https://marketplace.azurecr.io/helm/v1/repo",
+      "defaultValue": "https://mlrun.github.io/ce",
       "metadata": {
         "description": "Public Helm Repo URL"
       }
     },
     "helmApp": {
       "type": "string",
-      "defaultValue": "azure-marketplace/wordpress",
+      "defaultValue": "mlrun-marketplace/mlrun-ce",
       "metadata": {
         "description": "Public Helm App"
       }
     },
     "helmAppName": {
       "type": "string",
-      "defaultValue": "my-wordpress",
+      "defaultValue": "mlrun-ce",
       "metadata": {
         "description": "Public Helm App Name"
       }
@@ -119,7 +135,7 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "dnsPrefix": "[parameters('dnsPrefix')]",
+        "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
           {
             "name": "agentpool",
@@ -141,6 +157,40 @@
           }
         }
       }
+    },
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2021-09-01",
+      "name": "[parameters('clusterName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "Container Registry",
+        "container.registry": "[parameters('clusterName')]"
+      },
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "adminUserEnabled": "true"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-09-01",
+      "name": "[parameters('clusterName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2021-09-01",
+      "name": "[format('{0}/default/{1}', parameters('clusterName'),parameters('helmAppName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterName'))]"
+      ]
     },
     {
       "type": "Microsoft.Resources/deployments",
@@ -175,6 +225,15 @@
           },
           "helmAppName": {
             "value": "[parameters('helmAppName')]"
+          },
+          "dnsPrefix": {
+            "value": "[parameters('dnsPrefix')]"
+          },
+          "remoteAccessCIDR": {
+            "value": "[parameters('remoteAccessCIDR')]"
+          },
+          "userEmial": {
+            "value": "[parameters('userEmial')]"
           }
         },
         "template": {
@@ -219,38 +278,66 @@
             },
             "helmRepo": {
               "type": "string",
-              "defaultValue": "azure-marketplace",
+              "defaultValue": "mlrun-marketplace",
               "metadata": {
                 "description": "Public Helm Repo Name"
               }
             },
             "helmRepoURL": {
               "type": "string",
-              "defaultValue": "https://marketplace.azurecr.io/helm/v1/repo",
+              "defaultValue": "https://mlrun.github.io/ce",
               "metadata": {
                 "description": "Public Helm Repo URL"
               }
             },
             "helmApp": {
               "type": "string",
-              "defaultValue": "azure-marketplace/wordpress",
+              "defaultValue": "mlrun-marketplace/mlrun-ce",
               "metadata": {
                 "description": "Public Helm App"
               }
             },
             "helmAppName": {
               "type": "string",
-              "defaultValue": "my-wordpress",
+              "defaultValue": "mlrun-ce",
               "metadata": {
                 "description": "Public Helm App Name"
               }
+            },
+            "dnsPrefix": {
+              "type": "string",
+              "defaultValue": "[parameters('dnsPrefix')]",
+              "metadata": {
+                "description": "Cluster DNS name will be created in this domain"
+              }
+            },
+            "remoteAccessCIDR": {
+              "type": "string",
+              "defaultValue": "[parameters('remoteAccessCIDR')]",
+              "metadata": {
+                "description": "CIDR IP range that is permitted to access the instances and the ingress (external URL). We recommend that you set this value to a trusted IP range,  eg (192.168.1.0/24)"
+              }
+            },
+            "userEmial": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Email for ACR registry And  Let's Encrypt"
+              }
             }
           },
-          "variables": {
+          "variables":{
             "installScriptUri": "[uri(parameters('_artifactsLocation'), format('scripts/helm.sh{0}', parameters('_artifactsLocationSasToken')))]",
             "identityName": "[format('scratch{0}', uniqueString(resourceGroup().id))]",
-            "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-            "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]"
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+            "roleAssignmentName": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), resourceGroup().id)]",
+            "resourceGroupNewA": "[concat('MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
+            "resourceGroupNew": "[concat(subscription().id,'/resourceGroups/','MC_',resourceGroup().name,'_',parameters('clusterName'),'_',parameters('location'))]",
+            "roleAssignmentNameNew": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('resourceGroupNew'))]",
+            "roleAssignmentNameNew2": "[guid(variables('roleDefinitionId'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')),   subscription().id  )]",
+            "resourceGroupNewB": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('location'))]"
+
+
           },
           "resources": [
             {
@@ -260,17 +347,34 @@
               "location": "[parameters('location')]"
             },
             {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[variables('roleAssignmentName')]",
-              "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
-                "principalType": "ServicePrincipal"
-              },
+              "type": "Microsoft.Resources/deployments",
+              "name": "nested-role-assignment",
+              "apiVersion": "2018-05-01",
+              "subscriptionId": "[subscription().subscriptionId]",
+              "location": "[parameters('location')]",
               "dependsOn": [
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-              ]
+              ],
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId, variables('roleDefinitionId'))]",
+                      "properties": {
+                        "roleDefinitionId": "[variables('roleDefinitionId')]",
+                        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
+                        "principalType": "ServicePrincipal",
+                        "scope": "[subscription().id]"
+                      }
+                    }
+                  ]
+                }
+              }
             },
             {
               "type": "Microsoft.Resources/deploymentScripts",
@@ -286,7 +390,7 @@
               },
               "properties": {
                 "forceUpdateTag": "[parameters('utcValue')]",
-                "azCliVersion": "2.10.1",
+                "azCliVersion": "2.31.0",
                 "timeout": "PT30M",
                 "environmentVariables": [
                   {
@@ -312,6 +416,18 @@
                   {
                     "name": "HELM_APP_NAME",
                     "secureValue": "[parameters('helmAppName')]"
+                  },
+                  {
+                    "name": "DNS_PREFIX",
+                    "secureValue": "[parameters('dnsPrefix')]"
+                  },
+                  {
+                    "name": "REMOTE_ACCESS_CIDR",
+                    "secureValue": "[parameters('remoteAccessCIDR')]"
+                  },
+                  {
+                    "name": "USER_EMAIL",
+                    "secureValue": "[parameters('userEmial')]"
                   }
                 ],
                 "primaryScriptUri": "[variables('installScriptUri')]",
@@ -319,8 +435,8 @@
                 "retentionInterval": "P1D"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[subscriptionResourceId('Microsoft.Resources/deployments', 'nested-role-assignment')]"
               ]
             }
           ]
