@@ -1,5 +1,5 @@
 @description('The name of the Managed Cluster resource.')
-param clusterName string = 'devmlurncesystem01'
+param clusterName string = 'aksmlrunsystem01'
 
 @description('The location of the Managed Cluster resource.')
 param location string = resourceGroup().location
